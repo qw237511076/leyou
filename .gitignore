@@ -1,4 +1,4 @@
 /.idea
 /*.iml
-/leyou-registry/target
-/leyou-registry/src/test
+/**/target
+/**/src/test
