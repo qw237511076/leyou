@@ -9,6 +9,7 @@ import com.leyou.item.service.BrandService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
@@ -58,13 +59,32 @@ public class BrandServiceImpl implements BrandService {
 
     /**
      * 新增品牌
+     *
      * @param brand
      * @param cids
      */
     @Override
+    @Transactional
     public void saveBrand(Brand brand, List<Long> cids) {
         //先新增brand
-        Boolean flag= this.brandMapper.insertSelective(brand)==1;
+        this.brandMapper.insertSelective(brand);
         //在新增中间表
+
+        cids.forEach(cid -> {
+            this.brandMapper.insertCategoryAndBrand(cid, brand.getId());
+        });
+
+    }
+
+    /**
+     * 根据分类的id查询品牌列表
+     * @param cid
+     * @return
+     */
+    @Override
+    public List<Brand> queryBrandsByCid(Long cid) {
+        Brand record = new Brand();
+        return this.brandMapper.selectBrandsByCid(cid);
+
     }
 }
